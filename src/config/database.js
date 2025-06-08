@@ -6,8 +6,8 @@ const BookModel = require('../models/Book'); // Importa o modelo Book
 const UserModel = require('../models/User'); // Importa o modelo User
 
 // Configurações do banco de dados (ajuste conforme seu ambiente)
-const sequelize = new Sequelize('biblioteca_db', 'root', 'xp1xrp2S*', { // 'biblioteca_db', 'seu_usuario', 'sua_senha'
-    host: 'localhost', // ou o IP do seu banco de dados
+const sequelize = new Sequelize('biblioteca_db', 'root', 'cNzmPDQNKXmkqymipqxrumDDGhEpEAQD', { // 'biblioteca_db', 'seu_usuario', 'sua_senha'
+    host: 'https://biblioteca-online-backend-production-f2e5.up.railway.app/', // ou o IP do seu banco de dados
     dialect: 'mysql',
     logging: false // Desabilita o log de queries SQL no console
 });
