@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Online - Frontend</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .form-input {
+            @apply p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition duration-300;
+        }
+        .btn-secondary {
+            @apply bg-gray-300 text-gray-800 p-3 rounded-md hover:bg-gray-400 transition duration-300;
+        }
+        .btn-danger {
+            @apply bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition duration-300;
+        }
+        .btn-warning {
+            @apply bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 transition duration-300;
+        }
+        .card {
+            @apply bg-white p-6 rounded-lg shadow-md;
+        }
+        .message-box {
+            @apply p-4 mt-4 rounded-md text-sm;
+        }
+        .message-success {
+            @apply bg-green-100 text-green-700;
+        }
+        .message-error {
+            @apply bg-red-100 text-red-700;
+        }
+        .modal {
+            @apply fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50;
+        }
+        .modal-content {
+            @apply bg-white p-8 rounded-lg shadow-xl max-w-lg w-full relative;
+        }
+        .close-button {
+            @apply absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-800 text-white py-4 shadow-md">
+        <div class="container flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Biblioteca Online</h1>
+            <div id="auth-status" class="flex items-center space-x-4">
+                <span id="user-info" class="text-lg font-medium"></span>
+                <button id="logout-btn" class="btn-secondary hidden">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container py-8">
+        <div id="message-display" class="message-box hidden"></div>
+
+        <!-- Authentication Section -->
+        <section id="auth-section" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4">Registrar</h2>
+                <form id="register-form" class="space-y-4">
+                    <div>
+                        <label for="register-username" class="block text-gray-700 text-sm font-bold mb-2">Nome de Usuário:</label>
+                        <input type="text" id="register-username" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="register-email" class="block text-gray-700 text-sm font-bold mb-2">Email (Opcional):</label>
+                        <input type="email" id="register-email" class="form-input">
+                    </div>
+                    <div>
+                        <label for="register-password" class="block text-gray-700 text-sm font-bold mb-2">Senha:</label>
+                        <input type="password" id="register-password" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="register-role" class="block text-gray-700 text-sm font-bold mb-2">Cargo (Opcional, 'user' ou 'admin'):</label>
+                        <input type="text" id="register-role" class="form-input" value="user">
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Registrar</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4">Login</h2>
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label for="login-username" class="block text-gray-700 text-sm font-bold mb-2">Nome de Usuário:</label>
+                        <input type="text" id="login-username" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-gray-700 text-sm font-bold mb-2">Senha:</label>
+                        <input type="password" id="login-password" class="form-input" required>
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Login</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Book Management Section -->
+        <section id="book-management-section" class="hidden">
+            <div class="card mb-8">
+                <h2 class="text-2xl font-semibold mb-4">Gerenciar Livros</h2>
+                <button id="add-book-btn" class="btn-primary mb-4">Adicionar Novo Livro</button>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-md shadow-sm">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Título</th>
+                                <th class="py-2 px-4 text-left">Autor</th>
+                                <th class="py-2 px-4 text-left">Gênero</th>
+                                <th class="py-2 px-4 text-left">Publicado</th>
+                                <th class="py-2 px-4 text-left">Disponível</th>
+                                <th class="py-2 px-4 text-left">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="books-table-body">
+                            <!-- Books will be loaded here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <p id="no-books-message" class="text-center text-gray-500 mt-4 hidden">Nenhum livro cadastrado.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Book Modal -->
+    <div id="book-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal-btn">&times;</span>
+            <h2 id="modal-title" class="text-2xl font-semibold mb-4">Adicionar Novo Livro</h2>
+            <form id="book-form" class="space-y-4">
+                <input type="hidden" id="book-id">
+                <div>
+                    <label for="book-title" class="block text-gray-700 text-sm font-bold mb-2">Título:</label>
+                    <input type="text" id="book-title" class="form-input" required>
+                </div>
+                <div>
+                    <label for="book-author" class="block text-gray-700 text-sm font-bold mb-2">Autor:</label>
+                    <input type="text" id="book-author" class="form-input" required>
+                </div>
+                <div>
+                    <label for="book-genre" class="block text-gray-700 text-sm font-bold mb-2">Gênero:</label>
+                    <input type="text" id="book-genre" class="form-input">
+                </div>
+                <div>
+                    <label for="book-publishedYear" class="block text-gray-700 text-sm font-bold mb-2">Ano de Publicação:</label>
+                    <input type="number" id="book-publishedYear" class="form-input">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="book-available" class="mr-2">
+                    <label for="book-available" class="text-gray-700 text-sm font-bold">Disponível</label>
+                </div>
+                <button type="submit" class="btn-primary w-full">Salvar Livro</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da URL base da sua API Backend
+        // IMPORTANTE: Altere esta URL para o endereço do seu backend (local ou Railway)
+        const API_BASE_URL = 'http://localhost:3000/api'; // Ex: 'https://seu-projeto-railway.up.railway.app/api'
+
+        // Elementos do DOM
+        const authSection = document.getElementById('auth-section');
+        const bookManagementSection = document.getElementById('book-management-section');
+        const userInfoSpan = document.getElementById('user-info');
+        const logoutBtn = document.getElementById('logout-btn');
+        const registerForm = document.getElementById('register-form');
+        const loginForm = document.getElementById('login-form');
+        const messageDisplay = document.getElementById('message-display');
+        const booksTableBody = document.getElementById('books-table-body');
+        const noBooksMessage = document.getElementById('no-books-message');
+        const addBookBtn = document.getElementById('add-book-btn');
+        const bookModal = document.getElementById('book-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const bookForm = document.getElementById('book-form');
+        const modalTitle = document.getElementById('modal-title');
+
+        let currentUser = null; // Armazena informações do usuário logado
+        let currentToken = null; // Armazena o JWT
+
+        // --- Funções de Utilitário ---
+
+        // Exibe mensagens para o usuário
+        function showMessage(message, type = 'success') {
+            messageDisplay.textContent = message;
+            messageDisplay.className = `message-box ${type === 'success' ? 'message-success' : 'message-error'}`;
+            messageDisplay.classList.remove('hidden');
+            setTimeout(() => {
+                messageDisplay.classList.add('hidden');
+            }, 5000); // Esconde a mensagem após 5 segundos
+        }
+
+        // Obtém o token do Local Storage
+        function getToken() {
+            return localStorage.getItem('jwtToken');
+        }
+
+        // Salva o token no Local Storage
+        function saveToken(token) {
+            localStorage.setItem('jwtToken', token);
+            currentToken = token;
+        }
+
+        // Remove o token do Local Storage
+        function removeToken() {
+            localStorage.removeItem('jwtToken');
+            currentToken = null;
+        }
+
+        // Atualiza a UI com base no status de login
+        function updateUI() {
+            const token = getToken();
+            if (token) {
+                // Tenta decodificar o token para pegar info do usuário (apenas para exibição, não validação de segurança aqui)
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    currentUser = {
+                        id: payload.id,
+                        username: payload.username,
+                        role: payload.role
+                    };
+                    userInfoSpan.textContent = `Olá, ${currentUser.username} (${currentUser.role === 'admin' ? 'Administrador' : 'Usuário Comum'})`;
+                    logoutBtn.classList.remove('hidden');
+                    authSection.classList.add('hidden');
+                    bookManagementSection.classList.remove('hidden');
+                    fetchAllBooks(); // Carrega os livros quando o usuário está logado
+                } catch (error) {
+                    console.error("Erro ao decodificar token:", error);
+                    logout(); // Token inválido, força logout
+                }
+            } else {
+                currentUser = null;
+                userInfoSpan.textContent = '';
+                logoutBtn.classList.add('hidden');
+                authSection.classList.remove('hidden');
+                bookManagementSection.classList.add('hidden');
+                booksTableBody.innerHTML = ''; // Limpa a tabela de livros
+                noBooksMessage.classList.remove('hidden');
+            }
+        }
+
+        // --- Funções de Autenticação ---
+
+        async function registerUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const role = document.getElementById('register-role').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, role })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                    registerForm.reset(); // Limpa o formulário
+                } else {
+                    showMessage(data.message || 'Erro ao registrar usuário.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro na requisição de registro:', error);
+                showMessage('Erro de conexão ao tentar registrar.', 'error');
+            }
+        }
+
+        async function loginUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    saveToken(data.token);
+                    showMessage(data.message, 'success');
+                    loginForm.reset(); // Limpa o formulário
+                    updateUI(); // Atualiza a UI para mostrar os livros
+                } else {
+                    showMessage(data.message || 'Erro ao fazer login.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro na requisição de login:', error);
+                showMessage('Erro de conexão ao tentar fazer login.', 'error');
+            }
+        }
+
+        function logout() {
+            removeToken();
+            showMessage('Você foi desconectado.', 'success');
+            updateUI(); // Atualiza a UI para mostrar os formulários de auth
+        }
+
+        // --- Funções de CRUD de Livros ---
+
+        // Renderiza os livros na tabela
+        function renderBooks(books) {
+            booksTableBody.innerHTML = ''; // Limpa a tabela
+            if (books.length === 0) {
+                noBooksMessage.classList.remove('hidden');
+                return;
+            }
+            noBooksMessage.classList.add('hidden');
+
+            books.forEach(book => {
+                const row = document.createElement('tr');
+                row.className = 'border-b last:border-b-0 hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="py-2 px-4">${book.title}</td>
+                    <td class="py-2 px-4">${book.author}</td>
+                    <td class="py-2 px-4">${book.genre || '-'}</td>
+                    <td class="py-2 px-4">${book.publishedYear || '-'}</td>
+                    <td class="py-2 px-4">${book.available ? 'Sim' : 'Não'}</td>
+                    <td class="py-2 px-4 flex space-x-2">
+                        <button class="btn-warning edit-book-btn" data-id="${book.id}">Editar</button>
+                        <button class="btn-danger delete-book-btn" data-id="${book.id}">Excluir</button>
+                    </td>
+                `;
+                booksTableBody.appendChild(row);
+            });
+
+            // Adiciona event listeners aos botões de editar/excluir
+            document.querySelectorAll('.edit-book-btn').forEach(button => {
+                button.addEventListener('click', (e) => openEditModal(e.target.dataset.id));
+                // Desabilita se não for admin
+                if (currentUser && currentUser.role !== 'admin') {
+                    button.disabled = true;
+                    button.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+            document.querySelectorAll('.delete-book-btn').forEach(button => {
+                button.addEventListener('click', (e) => deleteBook(e.target.dataset.id));
+                // Desabilita se não for admin
+                if (currentUser && currentUser.role !== 'admin') {
+                    button.disabled = true;
+                    button.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        // Busca todos os livros do backend
+        async function fetchAllBooks() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/books`);
+                const books = await response.json();
+                if (response.ok) {
+                    renderBooks(books);
+                } else {
+                    showMessage(books.message || 'Erro ao carregar livros.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro na requisição de livros:', error);
+                showMessage('Erro de conexão ao carregar livros.', 'error');
+            }
+        }
+
+        // Abre o modal para adicionar ou editar livro
+        function openBookModal(book = null) {
+            bookForm.reset(); // Limpa o formulário
+            document.getElementById('book-id').value = ''; // Limpa o ID oculto
+            modalTitle.textContent = 'Adicionar Novo Livro';
+
+            if (book) { // Modo edição
+                modalTitle.textContent = 'Editar Livro';
+                document.getElementById('book-id').value = book.id;
+                document.getElementById('book-title').value = book.title;
+                document.getElementById('book-author').value = book.author;
+                document.getElementById('book-genre').value = book.genre || '';
+                document.getElementById('book-publishedYear').value = book.publishedYear || '';
+                document.getElementById('book-available').checked = book.available;
+            }
+            bookModal.classList.remove('hidden');
+        }
+
+        // Abre o modal em modo edição
+        async function openEditModal(bookId) {
+            // Verifica a role do usuário antes de abrir o modal de edição
+            if (!currentUser || currentUser.role !== 'admin') {
+                showMessage('Você não tem permissão para editar livros (requer role de administrador).', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/books/${bookId}`);
+                const book = await response.json();
+                if (response.ok) {
+                    openBookModal(book);
+                } else {
+                    showMessage(book.message || 'Livro não encontrado para edição.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar livro para edição:', error);
+                showMessage('Erro de conexão ao buscar livro para edição.', 'error');
+            }
+        }
+
+
+        // Envia o formulário de livro (adicionar ou editar)
+        async function submitBookForm(event) {
+            event.preventDefault();
+            const bookId = document.getElementById('book-id').value;
+            const title = document.getElementById('book-title').value;
+            const author = document.getElementById('book-author').value;
+            const genre = document.getElementById('book-genre').value;
+            const publishedYear = document.getElementById('book-publishedYear').value;
+            const available = document.getElementById('book-available').checked;
+
+            const bookData = { title, author, genre, publishedYear: parseInt(publishedYear), available };
+
+            let method = 'POST';
+            let url = `${API_BASE_URL}/books`;
+            let successMessage = 'Livro adicionado com sucesso!';
+            let errorMessage = 'Erro ao adicionar livro.';
+            let expectedStatus = 201;
+
+            // Para edição
+            if (bookId) {
+                method = 'PUT';
+                url = `${API_BASE_URL}/books/${bookId}`;
+                successMessage = 'Livro atualizado com sucesso!';
+                errorMessage = 'Erro ao atualizar livro.';
+                expectedStatus = 200;
+
+                // Validação de role para edição
+                if (!currentUser || currentUser.role !== 'admin') {
+                    showMessage('Você não tem permissão para atualizar livros.', 'error');
+                    return;
+                }
+            } else { // Para criação
+                 // Validação de role para criação
+                 if (!currentUser) { // Não é admin, mas precisa estar logado
+                    showMessage('Você precisa estar logado para adicionar livros.', 'error');
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                    },
+                    body: JSON.stringify(bookData)
+                });
+
+                const data = await response.json();
+                if (response.status === expectedStatus) {
+                    showMessage(successMessage, 'success');
+                    bookModal.classList.add('hidden'); // Fecha o modal
+                    fetchAllBooks(); // Atualiza a lista de livros
+                } else {
+                    showMessage(data.message || errorMessage, 'error');
+                }
+            } catch (error) {
+                console.error('Erro na requisição de livro:', error);
+                showMessage('Erro de conexão ao salvar livro.', 'error');
+            }
+        }
+
+        // Deleta um livro
+        async function deleteBook(bookId) {
+            // Confirmação para exclusão
+            if (!confirm('Tem certeza que deseja excluir este livro?')) {
+                return;
+            }
+
+            // Validação de role para exclusão
+            if (!currentUser || currentUser.role !== 'admin') {
+                showMessage('Você não tem permissão para excluir livros (requer role de administrador).', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/books/${bookId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                    }
+                });
+
+                if (response.status === 204) { // 204 No Content para deleção bem-sucedida
+                    showMessage('Livro excluído com sucesso!', 'success');
+                    fetchAllBooks(); // Atualiza a lista de livros
+                } else {
+                    const data = await response.json();
+                    showMessage(data.message || 'Erro ao excluir livro.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro na requisição de exclusão:', error);
+                showMessage('Erro de conexão ao excluir livro.', 'error');
+            }
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', updateUI); // Atualiza a UI ao carregar a página
+        registerForm.addEventListener('submit', registerUser);
+        loginForm.addEventListener('submit', loginUser);
+        logoutBtn.addEventListener('click', logout);
+        addBookBtn.addEventListener('click', () => {
+            // Valida se o usuário pode adicionar livros (apenas logado)
+            if (!currentUser) {
+                showMessage('Você precisa estar logado para adicionar livros.', 'error');
+                return;
+            }
+            openBookModal();
+        });
+        closeModalBtn.addEventListener('click', () => bookModal.classList.add('hidden'));
+        bookForm.addEventListener('submit', submitBookForm);
+
+    </script>
+</body>
+</html>
