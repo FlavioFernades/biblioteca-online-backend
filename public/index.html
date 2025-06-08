@@ -60,7 +60,7 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-blue-800 text-white py-4 shadow-md">
         <div class="container flex justify-between items-center">
-            <h1 class="text-3xl font-bold">Biblioteca Online</h1>
+            <h1 class="text-3xl font-bold">📚 Biblioteca Online</h1>
             <div id="auth-status" class="flex items-center space-x-4">
                 <span id="user-info" class="text-lg font-medium"></span>
                 <button id="logout-btn" class="btn-secondary hidden">Sair</button>
@@ -174,7 +174,7 @@
     <script>
         // Configuração da URL base da sua API Backend
         // IMPORTANTE: Altere esta URL para o endereço do seu backend (local ou Railway)
-        const API_BASE_URL = 'http://localhost:3000/api'; // Ex: 'https://seu-projeto-railway.up.railway.app/api'
+        const API_BASE_URL = 'https://biblioteca-online-backend-production-f2e5.up.railway.app/api'; // <-- ATUALIZADO PARA A URL DO RAILWAY!
 
         // Elementos do DOM
         const authSection = document.getElementById('auth-section');
