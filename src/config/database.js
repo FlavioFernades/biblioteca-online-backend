@@ -6,7 +6,7 @@ const BookModel = require('../models/Book'); // Importa o modelo Book
 const UserModel = require('../models/User'); // Importa o modelo User
 
 // Configurações do banco de dados (ajuste conforme seu ambiente)
-const sequelize = new Sequelize('biblioteca_db', 'root', '', { // 'biblioteca_db', 'seu_usuario', 'sua_senha'
+const sequelize = new Sequelize('biblioteca_db', 'root', 'cNzmPDQNKXmkqymipqxrumDDGhEpEAQD', { // 'biblioteca_db', 'seu_usuario', 'sua_senha'
     host: 'mysql://root:cNzmPDQNKXmkqymipqxrumDDGhEpEAQD@mysql.railway.internal:3306/railway', // ou o IP do seu banco de dados
     dialect: 'mysql',
     logging: false // Desabilita o log de queries SQL no console
